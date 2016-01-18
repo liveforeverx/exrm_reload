@@ -55,7 +55,10 @@ defmodule ReleaseManager.Reload do
     applications |> application_specs |> change_application_data(config)
   end
 
-  defp application_specs(applications) do
+  @doc """
+  Get application specifications, which needed to be passed to change_application_data callback.
+  """
+  def application_specs(applications) do
     specs = for application <- applications, do: {:application, application, make_application_spec(application)}
     incorrect_apps = for {_, application, :incorrect_spec} <- specs, do: application
     case incorrect_apps do
@@ -84,7 +87,11 @@ defmodule ReleaseManager.Reload do
     end
   end
 
-  defp change_application_data(specs, config) do
+  @doc """
+  Change application enviroments for given applications, specified by application specs, see
+  application_specs/0
+  """
+  def change_application_data(specs, config) do
     old_env = :application_controller.prep_config_change
     :ok = :application_controller.change_application_data(specs, config)
     :application_controller.config_change(old_env)
