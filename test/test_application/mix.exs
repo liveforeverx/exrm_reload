@@ -14,7 +14,8 @@ defmodule TestApplication.Mixfile do
 
   def deps do
     [{:exrm_reload, path: "../../"},
-     {:conform, github: "xerions/conform", branch: "master"},
-     {:exrm, github: "xerions/exrm", branch: "master"}]
+     {:conform, "~> 2.0"},
+     {:conform_exrm, "~> 1.0"},
+     {:exrm, "~> 1.0"}]
   end
 end

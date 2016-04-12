@@ -16,7 +16,7 @@ defmodule ExrmReload.Mixfile do
   end
 
   defp deps do
-    [{:conform, "~> 0.17.0"},
+    [{:conform, "~> 2.0"},
      {:fs, github: "synrc/fs", branch: "master"}]
   end
 end

@@ -37,7 +37,7 @@ It works with the releases are builded via `exrm`. You just call it by rpc from 
 
 	$ you_application rpc ReleaseManager.Reload run
 
-The test application uses xerions forks of [exrm](https://github.com/xerions/exrm) and [conform](https://github.com/xerions/conform) but it can work with the original exrm version `>= 0.19.7` and conform. Just override it.
+The test application uses stable versions of `exrm` (`1.0`), `conform` (`2.0`), `conform_exrm` (`1.0`). It is not garantied to work with lower versions.
 
 ## Usage for developing
 
@@ -53,9 +53,9 @@ The test application uses xerions forks of [exrm](https://github.com/xerions/exr
 
     ```elixir
     app = Mix.Project.get!.project[:app]
-    :code.add_path('_build/#{Mix.env}/lib/conform/ebin')
-    {:ok, conf} = Conform.Conf.from_file("config/#{app}.conf")
-    config = Conform.Schema.load!("config/#{app}.schema.exs") |> Conform.Translate.to_config([], conf)
+    Mix.Project.build_path |> Path.join("/lib/conform/ebin") |> to_char_list() |> :code.add_path()
+    {:ok, conf} = Conform.Conf.from_file(config)
+    config = "config/#{app}.schema.exs" |> Conform.Schema.load! |> Conform.Translate.to_config([], conf)
     for {app, envs} <- config, do: config(app, envs)
 
     config :exrm_reload,

@@ -3,9 +3,9 @@ defmodule ExrmReloadTest do
   doctest ReleaseManager.Reload
 
   setup do
-    {:ok, _} = :net_kernel.start([:master, :longnames])
+    {:ok, _} = :net_kernel.start([:master, :shortnames])
     true = :erlang.set_cookie(node, :test_application)
-    System.cmd("mix", ["do", "deps.get,", "compile,", "release"], [cd: "test/test_application"])
+    System.cmd("mix", ["do", "deps.get,", "compile,", "release", "--no-confirm-missing"], [cd: "test/test_application"])
     :os.cmd('./test/test_application/rel/test_application/bin/test_application start') |> IO.inspect
     :pong = ping
     on_exit fn ->
@@ -34,15 +34,19 @@ defmodule ExrmReloadTest do
   end
 
   defp rpc(module, function, args \\ []) do
-    :rpc.call(:"test_application@127.0.0.1", module, function, args)
+    :rpc.call(rel_node(), module, function, args)
   end
 
   defp ping(), do: ping(3)
   defp ping(n) do
     :timer.sleep(5000)
-    case :net_adm.ping :"test_application@127.0.0.1" do
+    case :net_adm.ping(rel_node) do
       :pong -> :pong
       _ -> if n < 0, do: :pang, else: ping(n-1)
     end
   end
+
+  defp hostname, do: :net_adm.localhost |> List.to_string |> String.split(".") |> List.first
+
+  defp rel_node, do: :"test_application@#{hostname()}"
 end
